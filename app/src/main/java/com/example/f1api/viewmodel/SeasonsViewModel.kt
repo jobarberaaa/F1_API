@@ -9,21 +9,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class SeasonsViewModel(private val repository: F1Repository = F1Repository()) : ViewModel() {
-
+class SeasonsViewModel(private val repo: F1Repository) : ViewModel() {
     private val _seasonsState = MutableStateFlow<UiState<List<Season>>>(UiState.Loading)
     val seasonsState: StateFlow<UiState<List<Season>>> = _seasonsState
 
     fun loadSeasons() {
         viewModelScope.launch {
-            _seasonsState.value = UiState.Loading
             try {
-                val response = repository.getSeasons()
+                val response = repo.getSeasons()
                 if (response.isSuccessful) {
-                    val seasons = response.body()?.seasons ?: emptyList()
-                    _seasonsState.value = UiState.Success(seasons)
+                    _seasonsState.value = UiState.Success(response.body()?.championships ?: emptyList())
                 } else {
-                    _seasonsState.value = UiState.Error("Error ${response.code()}: ${response.message()}")
+                    _seasonsState.value = UiState.Error("Error ${response.code()}")
                 }
             } catch (e: Exception) {
                 _seasonsState.value = UiState.Error(e.message ?: "Error desconocido")
@@ -31,3 +28,4 @@ class SeasonsViewModel(private val repository: F1Repository = F1Repository()) : 
         }
     }
 }
+

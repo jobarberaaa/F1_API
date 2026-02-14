@@ -9,21 +9,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class StandingsViewModel(private val repository: F1Repository = F1Repository()) : ViewModel() {
-
+class StandingsViewModel(private val repo: F1Repository) : ViewModel() {
     private val _standingsState = MutableStateFlow<UiState<List<Standing>>>(UiState.Loading)
     val standingsState: StateFlow<UiState<List<Standing>>> = _standingsState
 
-    fun loadStandings() {
+    fun loadDriversChampionship(year: Int) {
         viewModelScope.launch {
-            _standingsState.value = UiState.Loading
             try {
-                val response = repository.getStandings()
+                val response = repo.getDriversChampionship(year)
                 if (response.isSuccessful) {
-                    val standings = response.body()?.standings ?: emptyList()
-                    _standingsState.value = UiState.Success(standings)
+                    _standingsState.value = UiState.Success(response.body()?.drivers_championship ?: emptyList())
                 } else {
-                    _standingsState.value = UiState.Error("Error ${response.code()}: ${response.message()}")
+                    _standingsState.value = UiState.Error("Error ${response.code()}")
                 }
             } catch (e: Exception) {
                 _standingsState.value = UiState.Error(e.message ?: "Error desconocido")

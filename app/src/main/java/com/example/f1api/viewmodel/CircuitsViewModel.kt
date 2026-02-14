@@ -9,21 +9,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class CircuitsViewModel(private val repository: F1Repository = F1Repository()) : ViewModel() {
-
+class CircuitsViewModel(private val repo: F1Repository) : ViewModel() {
     private val _circuitsState = MutableStateFlow<UiState<List<Circuit>>>(UiState.Loading)
     val circuitsState: StateFlow<UiState<List<Circuit>>> = _circuitsState
 
     fun loadCircuits() {
         viewModelScope.launch {
-            _circuitsState.value = UiState.Loading
             try {
-                val response = repository.getCircuits()
+                val response = repo.getCircuits()
                 if (response.isSuccessful) {
-                    val circuits = response.body()?.circuits ?: emptyList()
-                    _circuitsState.value = UiState.Success(circuits)
+                    _circuitsState.value = UiState.Success(response.body()?.circuits ?: emptyList())
                 } else {
-                    _circuitsState.value = UiState.Error("Error ${response.code()}: ${response.message()}")
+                    _circuitsState.value = UiState.Error("Error ${response.code()}")
                 }
             } catch (e: Exception) {
                 _circuitsState.value = UiState.Error(e.message ?: "Error desconocido")

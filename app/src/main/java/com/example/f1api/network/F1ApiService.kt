@@ -7,66 +7,27 @@ import retrofit2.http.Path
 
 interface F1ApiService {
 
-    // -------------------
-    // Drivers
-    // -------------------
-    @GET("drivers")
+    @GET("api/drivers")
     suspend fun getDrivers(): Response<DriversResponse>
 
-    @GET("drivers/{driverId}")
-    suspend fun getDriverDetail(@Path("driverId") id: String): Response<Driver>
-
-    // -------------------
-    // Teams
-    // -------------------
-    @GET("teams")
+    @GET("api/teams")
     suspend fun getTeams(): Response<TeamsResponse>
 
-    @GET("teams/{teamId}")
-    suspend fun getTeamDetail(@Path("teamId") id: String): Response<Team>
-
-    // -------------------
-    // Seasons
-    // -------------------
-    @GET("seasons")
+    @GET("api/seasons")
     suspend fun getSeasons(): Response<SeasonsResponse>
 
-    @GET("seasons/{year}")
-    suspend fun getSeasonDetail(@Path("year") year: Int): Response<Season>
-
-    // -------------------
-    // Results
-    // -------------------
-    @GET("results")
-    suspend fun getResults(): Response<ResultsResponse>
-
-    @GET("results/{raceId}")
-    suspend fun getResultDetail(@Path("raceId") raceId: String): Response<Result>
-
-    // -------------------
-    // Standings
-    // -------------------
-    @GET("standings")
-    suspend fun getStandings(): Response<StandingsResponse>
-
-    @GET("standings/{season}")
-    suspend fun getStandingsBySeason(@Path("season") season: Int): Response<StandingsResponse>
-
-    // -------------------
-    // Circuits
-    // -------------------
-    @GET("circuits")
+    @GET("api/circuits")
     suspend fun getCircuits(): Response<CircuitsResponse>
 
-    @GET("circuits/{circuitId}")
-    suspend fun getCircuitDetail(@Path("circuitId") circuitId: String): Response<Circuit>
+    @GET("api/{year}")
+    suspend fun getRacesByYear(@Path("year") year: Int): Response<RacesResponse>
 
-    // -------------------
-    // Races
-    // -------------------
-    @GET("races")
-    suspend fun getRaces(): Response<RacesResponse>
+    @GET("api/{year}/{round}/fp1")
+    suspend fun getFP1(
+        @Path("year") year: Int,
+        @Path("round") round: Int
+    ): Response<ResultsResponse>
 
-    @GET("races/{raceId}")
-    suspend fun getRaceDetail(@Path("raceId") raceId: String): Response<Race>
+    @GET("api/{year}/drivers-championship")
+    suspend fun getDriversChampionship(@Path("year") year: Int): Response<StandingsResponse>
 }

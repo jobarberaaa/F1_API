@@ -9,21 +9,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class TeamsViewModel(private val repository: F1Repository = F1Repository()) : ViewModel() {
-
+class TeamsViewModel(private val repo: F1Repository) : ViewModel() {
     private val _teamsState = MutableStateFlow<UiState<List<Team>>>(UiState.Loading)
     val teamsState: StateFlow<UiState<List<Team>>> = _teamsState
 
     fun loadTeams() {
         viewModelScope.launch {
-            _teamsState.value = UiState.Loading
             try {
-                val response = repository.getTeams()
+                val response = repo.getTeams()
                 if (response.isSuccessful) {
-                    val teams = response.body()?.teams ?: emptyList()
-                    _teamsState.value = UiState.Success(teams)
+                    _teamsState.value = UiState.Success(response.body()?.teams ?: emptyList())
                 } else {
-                    _teamsState.value = UiState.Error("Error ${response.code()}: ${response.message()}")
+                    _teamsState.value = UiState.Error("Error ${response.code()}")
                 }
             } catch (e: Exception) {
                 _teamsState.value = UiState.Error(e.message ?: "Error desconocido")

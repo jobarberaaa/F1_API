@@ -1,6 +1,5 @@
 package com.example.f1api.model
 
-
 data class Driver(
     val driverId: String,
     val name: String,

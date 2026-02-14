@@ -1,8 +1,10 @@
 package com.example.f1api.model
 
+import com.google.gson.annotations.SerializedName
+
 data class Team(
     val teamId: String,
-    val name: String,
-    val nationality: String?,
+    @SerializedName("teamName") val name: String,
+    @SerializedName("teamNationality") val nationality: String?,
     val url: String?
 )

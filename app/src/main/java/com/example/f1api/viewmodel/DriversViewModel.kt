@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+
 class DriversViewModel(private val repository: F1Repository = F1Repository()) : ViewModel() {
 
     private val _driversState = MutableStateFlow<UiState<List<Driver>>>(UiState.Loading)
@@ -20,10 +21,9 @@ class DriversViewModel(private val repository: F1Repository = F1Repository()) : 
             try {
                 val response = repository.getDrivers()
                 if (response.isSuccessful) {
-                    val drivers = response.body()?.drivers ?: emptyList()
-                    _driversState.value = UiState.Success(drivers)
+                    _driversState.value = UiState.Success(response.body()?.drivers ?: emptyList())
                 } else {
-                    _driversState.value = UiState.Error("Error ${response.code()}: ${response.message()}")
+                    _driversState.value = UiState.Error("Error HTTP ${response.code()}")
                 }
             } catch (e: Exception) {
                 _driversState.value = UiState.Error(e.message ?: "Error desconocido")
